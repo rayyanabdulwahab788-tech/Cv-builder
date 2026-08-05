@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Salphaa CV Builder</title>
+  <!-- Library PDF direct download gochuuf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -28,7 +30,7 @@
         grid-template-columns: 1fr;
       }
     }
-    .form-section, .preview-section {
+    .form-section, .preview-section, .info-card {
       background: #1e293b;
       padding: 25px;
       border-radius: 14px;
@@ -76,7 +78,6 @@
     .btn-print:hover {
       background: #16a34a;
     }
-    /* Style CV Preview (Document View) */
     .cv-paper {
       background: white;
       color: #1e293b;
@@ -116,22 +117,36 @@
       white-space: pre-line;
     }
 
-    /* Print CSS (When PDF Download button is clicked) */
-    @media print {
-      body {
-        background: white;
-        padding: 0;
+    .extra-info-container {
+      max-width: 1100px;
+      margin: 30px auto 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 768px) {
+      .extra-info-container {
+        grid-template-columns: 1fr;
       }
-      .form-section, .btn-print, .support-box, h2 {
-        display: none !important;
-      }
-      .main-container {
-        display: block;
-      }
-      .cv-paper {
-        box-shadow: none;
-        padding: 0;
-      }
+    }
+    .info-card h3 {
+      color: #38bdf8;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .info-card p {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+    footer {
+      max-width: 1100px;
+      margin: 30px auto 10px auto;
+      text-align: center;
+      font-size: 12px;
+      color: #64748b;
+      border-top: 1px solid #334155;
+      padding-top: 15px;
     }
     .support-box {
       margin-top: 20px;
@@ -145,7 +160,6 @@
 <body>
 
   <div class="main-container">
-    <!-- Form Section -->
     <div class="form-section">
       <h2>📄 Odeeffannoo CV Galchi</h2>
 
@@ -184,7 +198,7 @@
         <input type="text" id="skillsInput" placeholder="fkn, HTML, JavaScript, Database, Editing" oninput="updateCV()">
       </div>
 
-      <button class="btn-print" onclick="window.print()">📥 CV PDF-dhaan Buufadhu (Download)</button>
+      <button class="btn-print" onclick="downloadPDF()">📥 CV PDF-dhaan Buufadhu (Download)</button>
 
       <div class="support-box">
         <p style="font-size:12px; color:#ccc;">☕ Nu Deeggaruu Barbaadduu?</p>
@@ -192,10 +206,9 @@
       </div>
     </div>
 
-    <!-- Live Preview Section -->
     <div class="preview-section">
       <h2>👁️ Dur-Argaa (Live Preview)</h2>
-      <div class="cv-paper">
+      <div class="cv-paper" id="cvPaper">
         <div class="cv-header">
           <h1 id="pvName">MAQAA KEETI</h1>
           <p id="pvTitle">Gita Hojii</p>
@@ -225,15 +238,53 @@
     </div>
   </div>
 
+  <div class="extra-info-container">
+    <div class="info-card">
+      <h3>ℹ️ Waa'ee Keenya (About Us)</h3>
+      <p>
+        <strong>Salphaa CV Builder</strong> meeshaa tolaa (free online tool) namoonni hojii barbaadanii fi barattoonni salphaatti CV sadarkaa isaa eeggate akka qophaaffatanii fi PDF-dhaan buufatan gargaaruudha. Kaayyon keenya meeshaalee teeknoolojii salphaa fi ammayyaa ta'an uumuudhaan fayyadamtoota keenyaaf tajaajila saffisaa fi qulqullina qabu kennuudha.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h3>🔒 Polisii Nageenyaa (Privacy Policy)</h3>
+      <p>
+        Nageenyi fi iccitiin odeeffannoo keessanii nu biratti baay'ee kabajamaadha. Odeeffannoon fi CV isin meeshaa kana irratti uumtan guutummaatti bilbila ykn kompiotara keessan irratti qofa hojjeta. Server keenya irratti odeeffannoon dhuunfaa tokkollee hin olka'amu ykn hin kuufamu. Beeksisa beeksisoota 3rd party (Google AdSense) fayyadamuu dandeenya.
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Salphaa CV Builder. Mirgi Hundaa Seeraan Kan Eegameedha.</p>
+  </footer>
+
   <script>
     function updateCV() {
-      document.getElementById('pvName').innerText = document.getElementById('nameInput').value || 'MAQAA KEETI';
-      document.getElementById('pvTitle').innerText = document.getElementById('titleInput').value || 'Gita Hojii';
-      document.getElementById('pvContact').innerText = document.getElementById('contactInput').value || 'Teessoo fi Saahiba';
-      document.getElementById('pvSummary').innerText = document.getElementById('summaryInput').value || 'Ibsi waa'ee keetii asirratti mul'ata...';
-      document.getElementById('pvExperience').innerText = document.getElementById('experienceInput').value || 'Muuxannoon hojii asirratti barreeffama...';
-      document.getElementById('pvEdu').innerText = document.getElementById('eduInput').value || 'Odeeffannoon barnootaa asitti ta'a...';
-      document.getElementById('pvSkills').innerText = document.getElementById('skillsInput').value || 'Dandeettiiwwan kee...';
+      const getVal = (id, fallback) => {
+        const val = document.getElementById(id).value;
+        return val.trim() !== "" ? val : fallback;
+      };
+
+      document.getElementById("pvName").innerText = getVal("nameInput", "MAQAA KEETI");
+      document.getElementById("pvTitle").innerText = getVal("titleInput", "Gita Hojii");
+      document.getElementById("pvContact").innerText = getVal("contactInput", "Teessoo fi Saahiba");
+      document.getElementById("pvSummary").innerText = getVal("summaryInput", "Ibsi waa'ee keetii asirratti mul'ata...");
+      document.getElementById("pvExperience").innerText = getVal("experienceInput", "Muuxannoon hojii asirratti barreeffama...");
+      document.getElementById("pvEdu").innerText = getVal("eduInput", "Odeeffannoon barnootaa asitti ta'a...");
+      document.getElementById("pvSkills").innerText = getVal("skillsInput", "Dandeettiiwwan kee...");
+    }
+
+    function downloadPDF() {
+      updateCV();
+      const element = document.getElementById('cvPaper');
+      const opt = {
+        margin:       0.3,
+        filename:     'My_CV.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
     }
   </script>
 
