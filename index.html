@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salphaa CV Builder</title>
-  <!-- Library PDF direct download gochuuf -->
+  <title>Salphaa CV & Cover Letter Builder</title>
+  <!-- Library PDF direct download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * {
@@ -18,18 +18,49 @@
       color: #f8fafc;
       padding: 20px;
     }
-    .main-container {
+    .wrapper {
       max-width: 1100px;
       margin: 0 auto;
+    }
+    
+    /* Navigation Tabs */
+    .tab-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #0284c7;
+      color: white;
+      border-color: #38bdf8;
+    }
+
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
     }
     @media (max-width: 768px) {
-      .main-container {
+      .tab-content.active {
         grid-template-columns: 1fr;
       }
     }
+
     .form-section, .preview-section, .info-card {
       background: #1e293b;
       padding: 25px;
@@ -79,7 +110,9 @@
     .btn-print:hover {
       background: #16a34a;
     }
-    .cv-paper {
+
+    /* Paper Previews */
+    .paper {
       background: white;
       color: #1e293b;
       padding: 30px;
@@ -118,7 +151,26 @@
       white-space: pre-line;
     }
 
-    /* Support Box & Coffee */
+    /* Cover Letter Specific Paper */
+    .cl-date {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 15px;
+    }
+    .cl-recipient {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+    .cl-body {
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 20px;
+    }
+
+    /* Support Box & Badges */
     .support-box {
       margin-top: 20px;
       background: rgba(255, 255, 255, 0.05);
@@ -137,16 +189,6 @@
       border-radius: 8px;
       text-decoration: none;
       margin-top: 8px;
-      transition: transform 0.2s;
-    }
-    .bmc-btn:hover {
-      transform: scale(1.03);
-    }
-
-    /* Social Media Links */
-    .social-section {
-      margin-top: 25px;
-      text-align: center;
     }
     .social-links {
       display: flex;
@@ -166,16 +208,8 @@
       border-radius: 20px;
       text-decoration: none;
       font-size: 12px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-    }
-    .social-badge:hover {
-      background: #0284c7;
-      color: #ffffff;
-      border-color: #0284c7;
     }
 
-    /* Extra Info Sections */
     .extra-info-container {
       max-width: 1100px;
       margin: 30px auto 0 auto;
@@ -187,16 +221,6 @@
       .extra-info-container {
         grid-template-columns: 1fr;
       }
-    }
-    .info-card h3 {
-      color: #38bdf8;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-    .info-card p {
-      font-size: 13px;
-      line-height: 1.6;
-      color: #cbd5e1;
     }
     footer {
       max-width: 1100px;
@@ -211,133 +235,171 @@
 </head>
 <body>
 
-  <div class="main-container">
-    <!-- Form Section -->
-    <div class="form-section">
-      <h2>📄 Odeeffannoo CV Galchi</h2>
+  <div class="wrapper">
+    <!-- Tabs Switcher -->
+    <div class="tab-container">
+      <button class="tab-btn active" onclick="switchTab('cvTab', this)">📄 CV Builder</button>
+      <button class="tab-btn" onclick="switchTab('clTab', this)">✉️ Cover Letter Builder (New)</button>
+    </div>
 
-      <div class="input-group">
-        <label>Maqaa Guutuu</label>
-        <input type="text" id="nameInput" placeholder="fkn, Rayyaan Abdulwahab" oninput="updateCV()">
+    <!-- TAB 1: CV BUILDER -->
+    <div id="cvTab" class="tab-content active">
+      <div class="form-section">
+        <h2>📄 Odeeffannoo CV Galchi</h2>
+        <div class="input-group">
+          <label>Maqaa Guutuu</label>
+          <input type="text" id="nameInput" placeholder="fkn, Rayyaan Abdulwahab" oninput="updateCV()">
+        </div>
+        <div class="input-group">
+          <label>Gita Hojii (Job Title)</label>
+          <input type="text" id="titleInput" placeholder="fkn, Software Developer" oninput="updateCV()">
+        </div>
+        <div class="input-group">
+          <label>Teessoo & Bilbila / Email</label>
+          <input type="text" id="contactInput" placeholder="Email | Phone..." oninput="updateCV()">
+        </div>
+        <div class="input-group">
+          <label>Waa'ee Keeti (Summary)</label>
+          <textarea id="summaryInput" placeholder="Ibsa gabaabaa..." oninput="updateCV()"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Muuxannoo Hojii</label>
+          <textarea id="experienceInput" placeholder="Bakka hojjetaa turte..." oninput="updateCV()"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Barnoota</label>
+          <textarea id="eduInput" placeholder="Yuunivarsiitii/Koleejjii..." oninput="updateCV()"></textarea>
+        </div>
+        <div class="input-group">
+          <label>Dandeettiiwwan</label>
+          <input type="text" id="skillsInput" placeholder="HTML, Database..." oninput="updateCV()">
+        </div>
+        <button class="btn-print" onclick="downloadCVPDF()">📥 CV PDF Buufadhu</button>
+
+        <div class="support-box">
+          <p style="font-size:12px; color:#ccc;">☕ Nu Deeggaruu Barbaadduu?</p>
+          <p style="color:#38bdf8; font-weight:bold; font-size:13px; margin: 4px 0;">Telebirr: 0973357016</p>
+          <a href="https://www.buymeacoffee.com/rayyaan" target="_blank" class="bmc-btn">☕ Buy me a coffee</a>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label>Gita Hojii (Job Title)</label>
-        <input type="text" id="titleInput" placeholder="fkn, Software Developer / ICT Specialist" oninput="updateCV()">
-      </div>
-
-      <div class="input-group">
-        <label>Teessoo & Lakkoofsa Bilbilaa / Email</label>
-        <input type="text" id="contactInput" placeholder="Email: example@gmail.com | Phone: +251..." oninput="updateCV()">
-      </div>
-
-      <div class="input-group">
-        <label>Waa'ee Keeti (Professional Summary)</label>
-        <textarea id="summaryInput" placeholder="Ibsa gabaabaa waa'ee dandeettii fi muuxannoo keetii..." oninput="updateCV()"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Muuxannoo Hojii (Work Experience)</label>
-        <textarea id="experienceInput" placeholder="Bakka hojjetaa turte fi gahee hojii kee..." oninput="updateCV()"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Barnoota (Education)</label>
-        <textarea id="eduInput" placeholder="Yuunivarsiitii/Koleejjii fi Sadarkaa Barnootaa..." oninput="updateCV()"></textarea>
-      </div>
-
-      <div class="input-group">
-        <label>Dandeettiiwwan (Skills)</label>
-        <input type="text" id="skillsInput" placeholder="fkn, HTML, JavaScript, Database, Editing" oninput="updateCV()">
-      </div>
-
-      <button class="btn-print" onclick="downloadPDF()">📥 CV PDF-dhaan Buufadhu (Download)</button>
-
-      <!-- Deeggarsa Box -->
-      <div class="support-box">
-        <p style="font-size:12px; color:#ccc;">☕ Nu Deeggaruu Barbaadduu?</p>
-        <p style="color:#38bdf8; font-weight:bold; font-size:13px; margin: 4px 0;">Telebirr: 0973357016</p>
-        <a href="https://www.buymeacoffee.com/rayyaan" target="_blank" class="bmc-btn">☕ Buy me a coffee</a>
+      <div class="preview-section">
+        <h2>👁️ Dur-Argaa CV</h2>
+        <div class="paper" id="cvPaper">
+          <div class="cv-header">
+            <h1 id="pvName">MAQAA KEETI</h1>
+            <p id="pvTitle">Gita Hojii</p>
+            <p id="pvContact" style="margin-top: 5px;">Teessoo fi Saahiba</p>
+          </div>
+          <div class="cv-section">
+            <h3>Summary</h3>
+            <p id="pvSummary">Ibsi waa'ee keetii asirratti mul'ata...</p>
+          </div>
+          <div class="cv-section">
+            <h3>Muuxannoo Hojii</h3>
+            <p id="pvExperience">Muuxannoon hojii asirratti barreeffama...</p>
+          </div>
+          <div class="cv-section">
+            <h3>Barnoota</h3>
+            <p id="pvEdu">Odeeffannoon barnootaa asitti ta'a...</p>
+          </div>
+          <div class="cv-section">
+            <h3>Dandeettiiwwan</h3>
+            <p id="pvSkills">Dandeettiiwwan kee...</p>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Live Preview Section -->
-    <div class="preview-section">
-      <h2>👁️ Dur-Argaa (Live Preview)</h2>
-      <div class="cv-paper" id="cvPaper">
-        <div class="cv-header">
-          <h1 id="pvName">MAQAA KEETI</h1>
-          <p id="pvTitle">Gita Hojii</p>
-          <p id="pvContact" style="margin-top: 5px;">Teessoo fi Saahiba</p>
+    <!-- TAB 2: COVER LETTER BUILDER -->
+    <div id="clTab" class="tab-content">
+      <div class="form-section">
+        <h2>✉️ Odeeffannoo Cover Letter Galchi</h2>
+        <div class="input-group">
+          <label>Maqaa Keeti fi Teessoo</label>
+          <input type="text" id="clSender" placeholder="fkn, Rayyaan Abdulwahab | Email | Phone" oninput="updateCL()">
         </div>
-
-        <div class="cv-section">
-          <h3>Summary</h3>
-          <p id="pvSummary">Ibsi waa'ee keetii asirratti mul'ata...</p>
+        <div class="input-group">
+          <label>Guyyaa (Date)</label>
+          <input type="text" id="clDate" placeholder="fkn, August 6, 2026" oninput="updateCL()">
         </div>
-
-        <div class="cv-section">
-          <h3>Muuxannoo Hojii</h3>
-          <p id="pvExperience">Muuxannoon hojii asirratti barreeffama...</p>
+        <div class="input-group">
+          <label>Dhaabbata Hojii (Recipient Company / HR)</label>
+          <input type="text" id="clRecipient" placeholder="fkn, To HR Manager, Ethio Telecom" oninput="updateCL()">
         </div>
-
-        <div class="cv-section">
-          <h3>Barnoota</h3>
-          <p id="pvEdu">Odeeffannoon barnootaa asitti ta'a...</p>
+        <div class="input-group">
+          <label>Mata Duree Iyyannoo (Subject)</label>
+          <input type="text" id="clSubject" placeholder="fkn, Application for ICT Officer Position" oninput="updateCL()">
         </div>
+        <div class="input-group">
+          <label>Qabiyyee Xalayaa (Letter Body)</label>
+          <textarea id="clBody" style="height: 140px;" placeholder="Iyyannoo hojii kee asitti barreessi..." oninput="updateCL()"></textarea>
+        </div>
+        <button class="btn-print" onclick="downloadCLPDF()">📥 Cover Letter PDF Buufadhu</button>
+      </div>
 
-        <div class="cv-section">
-          <h3>Dandeettiiwwan</h3>
-          <p id="pvSkills">Dandeettiiwwan kee...</p>
+      <div class="preview-section">
+        <h2>👁️ Dur-Argaa Cover Letter</h2>
+        <div class="paper" id="clPaper">
+          <div class="cv-header">
+            <h1 id="pvClSender" style="font-size:20px;">MAQAA KEETI</h1>
+          </div>
+          <div class="cl-date" id="pvClDate">Guyyaa: DD/MM/YYYY</div>
+          <div class="cl-recipient" id="pvClRecipient">Gara: Dhaabbata / HR</div>
+          <div style="font-weight:bold; margin-bottom:12px; color:#0284c7;" id="pvClSubject">RE: Mata Duree</div>
+          <div class="cl-body" id="pvClBody">Qabiyyeen xalayaa iyyannoo keetii asirratti mul'ata...</div>
+          <div style="margin-top:30px; font-size:13px;">
+            <p>Kabajamaa waliin,</p>
+            <p style="font-weight:bold; margin-top:5px;" id="pvClSign">Maqaa Keeti</p>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Social Media Section -->
+    <div class="extra-info-container" style="grid-template-columns: 1fr; margin-top: 20px;">
+      <div class="info-card" style="text-align:center;">
+        <h3>🌐 Nu Qunnamuuf (Connect With Us)</h3>
+        <div class="social-links">
+          <a href="https://t.me/+251973357016" target="_blank" class="social-badge">✈️ Telegram</a>
+          <a href="https://wa.me/251973357016" target="_blank" class="social-badge">💬 WhatsApp</a>
+          <a href="https://www.fb.com/l/6lp1kJRRR" target="_blank" class="social-badge">📘 Facebook</a>
+          <a href="https://www.tiktok.com/@r_a_y_y_a_n_4" target="_blank" class="social-badge">🎵 TikTok</a>
+          <a href="https://github.com/rayyanabdulwahab788-tech" target="_blank" class="social-badge">💻 GitHub</a>
+          <a href="tel:0973357016" class="social-badge">📞 Bilbila</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- About & Privacy -->
+    <div class="extra-info-container">
+      <div class="info-card">
+        <h3>ℹ️ Waa'ee Keenya</h3>
+        <p><strong>Salphaa CV & Cover Letter Builder</strong> meeshaa tolaa namoonni CV fi Xalayaa Iyyannoo Hojii sadarkaa isaa eeggate akka qophaaffatanii fi PDF-dhaan buufatan gargaaruudha.</p>
+      </div>
+      <div class="info-card">
+        <h3>🔒 Polisii Nageenyaa</h3>
+        <p>Odeeffannoon keessan guutummaatti bilbila keessan irratti qofa hojjeta. Server irratti hin kuufamu.</p>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2026 Salphaa CV Builder. Developed by Rayyaan Abdulwahab.</p>
+    </footer>
   </div>
-
-  <!-- Social Media & Contact Section -->
-  <div class="extra-info-container" style="grid-template-columns: 1fr; margin-top: 20px;">
-    <div class="info-card social-section">
-      <h3>🌐 Nu Qunnamuuf (Connect With Us)</h3>
-      <p style="font-size:13px; color:#94a3b8; margin-bottom: 10px;">Gaffii, yaada ykn deeggarsaaf karaa miidiyaa hawaasaa keenyaa nu qunnamuu dandeessu:</p>
-      <div class="social-links">
-        <a href="https://t.me/+251973357016" target="_blank" class="social-badge">✈️ Telegram</a>
-        <a href="https://wa.me/251973357016" target="_blank" class="social-badge">💬 WhatsApp</a>
-        <a href="https://www.fb.com/l/6lp1kJRRR" target="_blank" class="social-badge">📘 Facebook</a>
-        <a href="https://www.tiktok.com/@r_a_y_y_a_n_4" target="_blank" class="social-badge">🎵 TikTok</a>
-        <a href="https://github.com/rayyanabdulwahab788-tech" target="_blank" class="social-badge">💻 GitHub</a>
-        <a href="tel:0973357016" class="social-badge">📞 Bilbila</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- About Us & Privacy Policy Sections -->
-  <div class="extra-info-container">
-    <div class="info-card">
-      <h3>ℹ️ Waa'ee Keenya (About Us)</h3>
-      <p>
-        <strong>Salphaa CV Builder</strong> meeshaa tolaa (free online tool) namoonni hojii barbaadanii fi barattoonni salphaatti CV sadarkaa isaa eeggate akka qophaaffatanii fi PDF-dhaan buufatan gargaaruudha. Kaayyon keenya meeshaalee teeknoolojii salphaa fi ammayyaa ta'an uumuudhaan fayyadamtoota keenyaaf tajaajila saffisaa fi qulqullina qabu kennuudha.
-      </p>
-    </div>
-
-    <div class="info-card">
-      <h3>🔒 Polisii Nageenyaa (Privacy Policy)</h3>
-      <p>
-        Nageenyi fi iccitiin odeeffannoo keessanii nu biratti baay'ee kabajamaadha. Odeeffannoon fi CV isin meeshaa kana irratti uumtan guutummaatti bilbila ykn kompiotara keessan irratti qofa hojjeta. Server keenya irratti odeeffannoon dhuunfaa tokkollee hin olka'amu ykn hin kuufamu. Beeksisa beeksisoota 3rd party (Google AdSense) fayyadamuu dandeenya.
-      </p>
-    </div>
-  </div>
-
-  <footer>
-    <p>© 2026 Salphaa CV Builder. Developed by Rayyaan Abdulwahab.</p>
-  </footer>
 
   <script>
-    function updateCV() {
-      const getVal = (id, fallback) => {
-        const val = document.getElementById(id).value;
-        return val.trim() !== "" ? val : fallback;
-      };
+    // Tab switching logic
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
 
+    // CV Live Update
+    function updateCV() {
+      const getVal = (id, fallback) => document.getElementById(id).value.trim() || fallback;
       document.getElementById("pvName").innerText = getVal("nameInput", "MAQAA KEETI");
       document.getElementById("pvTitle").innerText = getVal("titleInput", "Gita Hojii");
       document.getElementById("pvContact").innerText = getVal("contactInput", "Teessoo fi Saahiba");
@@ -347,17 +409,26 @@
       document.getElementById("pvSkills").innerText = getVal("skillsInput", "Dandeettiiwwan kee...");
     }
 
-    function downloadPDF() {
+    // Cover Letter Live Update
+    function updateCL() {
+      const getVal = (id, fallback) => document.getElementById(id).value.trim() || fallback;
+      const sender = getVal("clSender", "MAQAA KEETI | Teessoo");
+      document.getElementById("pvClSender").innerText = sender;
+      document.getElementById("pvClSign").innerText = sender.split('|')[0];
+      document.getElementById("pvClDate").innerText = getVal("clDate", "Guyyaa: DD/MM/YYYY");
+      document.getElementById("pvClRecipient").innerText = getVal("clRecipient", "Gara: Dhaabbata / HR Manager");
+      document.getElementById("pvClSubject").innerText = "RE: " + getVal("clSubject", "Mata Duree Iyyannoo");
+      document.getElementById("pvClBody").innerText = getVal("clBody", "Qabiyyeen xalayaa iyyannoo keetii asirratti mul'ata...");
+    }
+
+    // PDF Downloads
+    function downloadCVPDF() {
       updateCV();
-      const element = document.getElementById('cvPaper');
-      const opt = {
-        margin:       0.3,
-        filename:     'My_CV.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2 },
-        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
-      html2pdf().set(opt).from(element).save();
+      html2pdf().set({ margin: 0.3, filename: 'My_CV.pdf', html2canvas: { scale: 2 } }).from(document.getElementById('cvPaper')).save();
+    }
+    function downloadCLPDF() {
+      updateCL();
+      html2pdf().set({ margin: 0.4, filename: 'Cover_Letter.pdf', html2canvas: { scale: 2 } }).from(document.getElementById('clPaper')).save();
     }
   </script>
 
